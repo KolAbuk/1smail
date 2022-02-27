@@ -1,0 +1,29 @@
+{
+  "name": "node-1smail",
+  "version": "1.0.0",
+  "description": "Async Node.js API for https://www.1secmail.com/",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KolAbuk/1smail.git"
+  },
+  "keywords": [
+    "TepmMail",
+    "Temporary",
+    "Mail",
+    "1secmail",
+    "1secmail.com"
+  ],
+  "author": "KolAbuk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KolAbuk/1smail/issues"
+  },
+  "homepage": "https://github.com/KolAbuk/1smail#readme",
+  "dependencies": {
+    "axios": "^0.26.0"
+  }
+}
