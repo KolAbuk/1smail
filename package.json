@@ -1,6 +1,6 @@
 {
   "name": "node-1smail",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Async Node.js API for https://www.1secmail.com/",
   "main": "index.js",
   "scripts": {
