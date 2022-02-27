@@ -2,7 +2,7 @@ const axios = require("axios");
 const fs = require("fs");
 
 class TempMail {
-    static msgsCount = 0;
+    msgsCount = 0;
     async createAddress(mailAddress = null, domain = null) {
         try {
             if (mailAddress) {
@@ -25,15 +25,15 @@ class TempMail {
             throw (e);
         }
     }
-    async getMessages(ms) {
+    async getMessages(ms = 5000, attempts = 15) {
         try {
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < attempts; i++) {
                 await new Promise(resolve => setTimeout(resolve, ms));
                 const {
                     data
                 } = await axios.get(`https://www.1secmail.com/api/v1/?action=getMessages&login=${this._mailAddress}&domain=${this._domain}`);
                 if (data.length) {
-                    msgsCount = data.length;
+                    this.msgsCount = data.length;
                     return {
                         address: this.getAddress,
                         messageCount: data.length,
@@ -50,26 +50,38 @@ class TempMail {
             throw (e);
         }
     }
-    async getNewMessages(ms) {
+    async getNewMessages(ms = 5000, attempts = 15) {
         try {
-            for (let i = 0; i < 15; i++) {
+            let dat;
+            for (let i = 0; i < attempts; i++) {
                 await new Promise(resolve => setTimeout(resolve, ms));
                 const {
                     data
                 } = await axios.get(`https://www.1secmail.com/api/v1/?action=getMessages&login=${this._mailAddress}&domain=${this._domain}`);
-                if (data.length > msgsCount) {
+                if (data.length > this.msgsCount) {
+                    this.msgsCount = data.length;
                     return {
                         address: this.getAddress,
                         messageCount: data.length,
                         messages: data
                     };
+                } else {
+                    dat = data;
                 }
             }
-            return {
-                address: this.getAddress,
-                messageCount: 0,
-                messages: []
-            };
+            if (dat.length) {
+                return {
+                    address: this.getAddress,
+                    messageCount: dat.length,
+                    messages: dat
+                };
+            } else {
+                return {
+                    address: this.getAddress,
+                    messageCount: 0,
+                    messages: []
+                };
+            }
         } catch (e) {
             throw (e);
         }
