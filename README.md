@@ -30,7 +30,7 @@ Create e-mail
     await address.createAddress("username");
     //Create e-mail address with your username and domain
     await address.createAddress("username", "1secmail.org");
-    //Full domain list you can see [there](https://www.1secmail.com/api/v1/?action=getDomainList)
+    //Full domain list you can see there: https://www.1secmail.com/api/v1/?action=getDomainList
 ```
 
 ### Get e-mail address
