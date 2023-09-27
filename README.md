@@ -1,4 +1,3 @@
-
 # node-1smail
 
 Async Node.js API for https://www.1secmail.com/
@@ -12,7 +11,7 @@ npm i node-1smail
 - Importing
 
 ```javascript
-const TempMail = require("node-1smail");
+import { TempMail } from "node-1smail";
 ```
 
 ## Usage
@@ -22,15 +21,15 @@ const TempMail = require("node-1smail");
 Create e-mail
 
 ```javascript
-    const address = new TempMail();
+const mail = await TempMail.init("myownlogin", "laafd.com");
 
-    //Create random e-mail address
-    await address.createAddress();
-    //Create e-mail address with your username and random domain
-    await address.createAddress("username");
-    //Create e-mail address with your username and domain
-    await address.createAddress("username", "1secmail.org");
-    //Full domain list you can see there: https://www.1secmail.com/api/v1/?action=getDomainList
+//Create random e-mail address
+await TempMail.init();
+//Create e-mail address with your username and random domain
+await TempMail.init("username");
+//Create e-mail address with your username and domain
+await TempMail.init("username", "1secmail.org");
+//Full domain list you can see there: https://www.1secmail.com/api/v1/?action=getDomainList
 ```
 
 ### Get e-mail address
@@ -38,7 +37,7 @@ Create e-mail
 Return full e-mail address
 
 ```javascript
-    address.getAddress(); // => username@1secmail.org
+mail.getAddress(); // => username@1secmail.org
 ```
 
 ### Get messages
@@ -46,62 +45,42 @@ Return full e-mail address
 Return JSON-object with messages
 
 ```javascript
-    await address.getMessages();
-    //15 attempts to receive messages with a 5 second delay
-    await address.getMessages(3000);
-    //15 attempts to receive messages with a 3 second delay
-    await address.getMessages(3000,20);
-    //20 attempts to receive messages with a 3 second delay
+await mail.getMessages();
+//return message list or wait for any message if there no one
+await mail.getMessages(true);
+//wait for new message with id > lastMessageId
 ```
 
-If there are no messages
-```javascript
-    {
-        address: "username@1secmail.org",
-        messageCount: 0,
-        messages: []
-    }
-```
-Else
-```javascript
-    {
-        address: "username@1secmail.org",
-        messageCount: 2,
-        messages: [
-            {
-	            "id": 639,
-	            "from": "someone@example.com",
-	            "subject": "Some subject",
-	            "date": "2018-06-08 14:33:55"
-            }, {
-	            "id": 640,
-	            "from": "someoneelse@example.com",
-	            "subject": "Other subject",
-	            "date": "2018-06-08 14:40:55"
-            }]
-    }
-```
-
-### Get messages
-
-Waiting for new message and return JSON-object
-Syntax is similar to the getMessages()
+Messages list example
 
 ```javascript
-    await address.getNewMessages();
-    await address.getMessages(3000);
-    await address.getMessages(3000,20);
+[
+  {
+    id: 639,
+    from: "someone@example.com",
+    subject: "Some subject",
+    date: "2018-06-08 14:33:55",
+  },
+  {
+    id: 640,
+    from: "someoneelse@example.com",
+    subject: "Other subject",
+    date: "2018-06-08 14:40:55",
+  },
+];
 ```
 
-### Get one message
+### Get message data
 
 Return JSON-object with one message
 
 ```javascript
-    const msgID = 639;  //message ID for this e-mail
-    await address.getOneMessage(msgID);
+const msgID = 639; //message ID for this e-mail
+await await mail.getMessageData(msgID);
 ```
+
 Returns
+
 ```javascript
     {
         "id": 639,
@@ -119,13 +98,19 @@ Returns
     }
 ```
 
-### Download file
+### Get links to attached files
 
-Download attached file
+Returns links for attached files
 
 ```javascript
-    const msgID = 639;                          //message ID for this e-mail
-    const filename = "iometer.pdf";             //atteched file name 
-    const path = "./data/downloaded_file.pdf";  //path where file will be created
-    await address.download(msgId, filename, path);
+const msg = await mail.getMessageData(639);
+mail.getLinksToFiles(msg);
+```
+
+Example
+
+```javascript
+[
+  "https://www.1secmail.com/api/v1/?action=download&login=username&domain=1secmail.org&id=639&file=iometer.pdf",
+];
 ```
